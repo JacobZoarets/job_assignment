@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    environment:
+      - NEXT_PUBLIC_API_URL=http://backend:5000/api/users
+    volumes:
+      - ./frontend:/app
+    networks:
+      - user-management-network
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "5000:80"
+    volumes:
+      - ./backend:/app
+    networks:
+      - user-management-network
+
+networks:
+  user-management-network:
+    driver: bridge
+
+# This docker-compose file defines two services: frontend and backend.
+# The frontend service builds the React application and exposes it on port 3000.
+# It depends on the backend service, which builds the .NET API and exposes it on port 5000.
+# Both services are connected to a custom bridge network for internal communication.
+# Environment variables are set to allow the frontend to access the backend API.
